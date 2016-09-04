@@ -4,38 +4,19 @@ namespace ContactsGrabber;
 
 class Contact
 {
-    const PHONE = 'phone';
-    const PHONE_PURPOSE_HOME = 'phone:home';
-    const VKONTAKTE = 'vkontakte';
-
     /**
-     * @var string
+     * @var string|null
      */
     protected $type;
     /**
      * @var string
      */
     protected $value;
-    /**
-     * @var string
-     */
-    protected $purpose;
-
-    public static function make($type, $value, $purpose = null)
-    {
-        $contact = new static();
-
-        $contact->setType($type);
-        $contact->setValue($value);
-        $contact->setPurpose($purpose);
-
-        return $contact;
-    }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getType(): string
+    public function getType()
     {
         return $this->type;
     }
@@ -43,7 +24,7 @@ class Contact
     /**
      * @param string $type
      */
-    public function setType(string $type)
+    public function setType(string $type = null)
     {
         $this->type = $type;
     }
@@ -62,22 +43,6 @@ class Contact
     public function setValue($value)
     {
         $this->value = $value;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPurpose()
-    {
-        return $this->purpose;
-    }
-
-    /**
-     * @param string $purpose
-     */
-    public function setPurpose($purpose)
-    {
-        $this->purpose = $purpose;
     }
 
 }

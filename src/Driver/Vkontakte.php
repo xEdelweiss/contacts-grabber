@@ -8,6 +8,7 @@ use ContactsGrabber\Contact;
 use ContactsGrabber\Country;
 use ContactsGrabber\Date;
 use ContactsGrabber\Metacontact;
+use ContactsGrabber\Utils;
 use GuzzleHttp\Client;
 
 class Vkontakte extends AbstractDriver implements OAuthInterface
@@ -102,8 +103,8 @@ class Vkontakte extends AbstractDriver implements OAuthInterface
             throw new \Exception('Unauthorized. Access Token is required');
         }
 
-        $response = $this->makeRequest($requestUrl);
-        $items = $this->getFromArray($response['response'], 'items', []);
+        $response = Utils::makeJsonRequest($requestUrl);
+        $items = Utils::getFromArray($response, 'response.items', []);
 
         return $this->responseToEntities($items);
     }
@@ -163,7 +164,7 @@ class Vkontakte extends AbstractDriver implements OAuthInterface
             'redirect_uri' => $redirectUrl,
         ]);
 
-        $response = $this->makeRequest($requestUrl);
+        $response = Utils::makeJsonRequest($requestUrl);
 
         if (!isset($response['access_token'])) {
             throw new \Exception('Access token fetch failed');
@@ -335,28 +336,6 @@ class Vkontakte extends AbstractDriver implements OAuthInterface
      * Low level methods
      */
 
-    protected function makeRequest($url, $method = 'GET', $options = [])
-    {
-        $client = new Client([
-            'timeout' => 5,
-        ]);
-
-        $response = $client->request($method, $url, $options);
-
-        if ($response->getStatusCode() != 200) {
-            throw new \Exception('Request failed');
-        }
-
-        $data = json_decode((string)$response->getBody(), true);
-
-        return $data;
-    }
-
-    protected function getFromArray($array, $key, $default = null)
-    {
-        return isset($array[$key]) ? $array[$key] : $default;
-    }
-
     /**
      * @param array $response
      * @return Metacontact[]
@@ -372,35 +351,28 @@ class Vkontakte extends AbstractDriver implements OAuthInterface
 
         foreach ($response as $user) {
             $metacontact = new Metacontact();
-            $gender = $genderMap[$this->getFromArray($user, 'sex', 0)];
+            $gender = $genderMap[Utils::getFromArray($user, 'sex', 0)];
 
-            $metacontact->setFirstName($this->getFromArray($user, 'first_name'));
-            $metacontact->setLastName($this->getFromArray($user, 'last_name'));
-            $metacontact->setNickName($this->getFromArray($user, 'nick_name'));
-            $metacontact->setCountry($this->getCountry($this->getFromArray($user, 'country'))); // @fixme
-            $metacontact->setCity($this->getFromArray($user, 'city')); // @fixme
-            $metacontact->setPhotoUrl($this->getFromArray($user, 'photo_200_orig')); // @fixme
+            $metacontact->setFirstName(Utils::getFromArray($user, 'first_name'));
+            $metacontact->setLastName(Utils::getFromArray($user, 'last_name'));
+            $metacontact->setNickName(Utils::getFromArray($user, 'nick_name'));
+            $metacontact->setCountry($this->getCountry(Utils::getFromArray($user, 'country')));
+            $metacontact->setCity(Utils::getFromArray($user, 'city'));
+            $metacontact->setPhotoUrl(Utils::getFromArray($user, 'photo_200_orig'));
             $metacontact->setGender($gender);
 
-            $birthdayDate = $this->getFromArray($user, 'bdate');
+            $birthdayDate = Utils::getFromArray($user, 'bdate');
             if ($birthdayDate) {
                 $metacontact->addDate(new Date(Date::TYPE_BIRTHDAY, Carbon::createFromFormat(mb_substr_count($birthdayDate, '.') == 1 ? 'd.m' : 'd.m.Y', $birthdayDate)));
             }
 
-            $homePhone = $this->getFromArray($user, 'home_phone');
+            $homePhone = Utils::getFromArray($user, 'home_phone');
             if ($homePhone) {
-                $metacontact->addContact(Contact::make(
-                    Contact::PHONE,
-                    $homePhone,
-                    Contact::PHONE_PURPOSE_HOME
-                ));
+                $metacontact->addContact(new Contact\Phone($homePhone, Contact\Phone::TYPE_HOME, $metacontact->getCountry()));
             }
 
-            $userId = $this->getFromArray($user, 'id');
-            $metacontact->addContact(Contact::make(
-                Contact::VKONTAKTE,
-                $userId
-            ));
+            $userId = Utils::getFromArray($user, 'id');
+            $metacontact->addContact(new Contact\Vkontakte($userId));
 
             $result[] = $metacontact;
         }
