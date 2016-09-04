@@ -73,7 +73,7 @@ class Metacontact
     }
 
     /**
-     * @return mixed
+     * @return Contact
      */
     public function getCountry()
     {
@@ -81,9 +81,9 @@ class Metacontact
     }
 
     /**
-     * @param mixed $country
+     * @param Country $country
      */
-    public function setCountry($country)
+    public function setCountry(Country $country = null)
     {
         $this->country = $country;
     }
