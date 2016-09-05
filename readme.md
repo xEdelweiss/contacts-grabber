@@ -3,7 +3,7 @@
 Supported sources:
 
 - [x] VKontakte API  
-- [ ] Google Contacts API  
+- [x] Google Contacts API  
 - [ ] Facebook (?)  
 
 ## Setup
