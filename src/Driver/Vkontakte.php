@@ -353,6 +353,7 @@ class Vkontakte extends AbstractDriver implements OAuthInterface
             $metacontact = new Metacontact();
             $gender = $genderMap[Utils::getFromArray($user, 'sex', 0)];
 
+            $metacontact->setSourceId(Utils::getFromArray($user, 'id'));
             $metacontact->setFirstName(Utils::getFromArray($user, 'first_name'));
             $metacontact->setLastName(Utils::getFromArray($user, 'last_name'));
             $metacontact->setNickName(Utils::getFromArray($user, 'nick_name'));

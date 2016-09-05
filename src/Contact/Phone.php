@@ -9,6 +9,8 @@ use libphonenumber\PhoneNumberUtil;
 class Phone extends Contact
 {
     const TYPE_HOME = 'home';
+    const TYPE_MOBILE = 'mobile';
+    const TYPE_OTHER = 'other';
 
     /**
      * @var string|null
@@ -25,7 +27,7 @@ class Phone extends Contact
     {
         $this->setValue($value);
         $this->setType($type);
-        $this->possibleCountry = $possibleCountry;
+        $this->setPossibleCountry($possibleCountry);
     }
 
     /**

@@ -7,6 +7,11 @@ class Metacontact
     const GENDER_FEMALE = 'female';
     const GENDER_MALE = 'male';
 
+    /**
+     * Identifier provided (or not) by driver
+     * @var mixed
+     */
+    protected $sourceId;
     protected $firstName;
     protected $lastName;
     protected $nickName;
@@ -166,5 +171,21 @@ class Metacontact
     public function getContacts()
     {
         return $this->contacts;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSourceId()
+    {
+        return $this->sourceId;
+    }
+
+    /**
+     * @param mixed $sourceId
+     */
+    public function setSourceId($sourceId)
+    {
+        $this->sourceId = $sourceId;
     }
 }
