@@ -9,10 +9,12 @@
     ],
     "require": {
         "guzzlehttp/guzzle": "~6.0",
-        "symfony/var-dumper": "3.*",
         "nesbot/carbon": "^1.21",
         "giggsey/libphonenumber-for-php": "^7.6",
         "google/apiclient": "^2.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "3.*"
     },
     "autoload": {
         "psr-4": {
